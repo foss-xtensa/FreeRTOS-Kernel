@@ -1,5 +1,5 @@
 /*
- * FreeRTOS Kernel <DEVELOPMENT BRANCH>
+ * FreeRTOS Kernel V11.2.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
@@ -418,7 +418,7 @@ BaseType_t xQueueGenericReset( QueueHandle_t xQueue,
 
             #if ( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
             {
-                /* Queues can be allocated wither statically or dynamically, so
+                /* Queues can be allocated either statically or dynamically, so
                  * note this queue was allocated statically in case the queue is
                  * later deleted. */
                 pxNewQueue->ucStaticallyAllocated = pdTRUE;
@@ -513,7 +513,10 @@ BaseType_t xQueueGenericReset( QueueHandle_t xQueue,
             /* Check for multiplication overflow. */
             ( ( SIZE_MAX / uxQueueLength ) >= uxItemSize ) &&
             /* Check for addition overflow. */
-            ( ( SIZE_MAX - sizeof( Queue_t ) ) >= ( size_t ) ( uxQueueLength * uxItemSize ) ) )
+            /* MISRA Ref 14.3.1 [Configuration dependent invariant] */
+            /* More details at: https://github.com/FreeRTOS/FreeRTOS-Kernel/blob/main/MISRA.md#rule-143. */
+            /* coverity[misra_c_2012_rule_14_3_violation] */
+            ( ( SIZE_MAX - sizeof( Queue_t ) ) >= ( size_t ) ( ( size_t ) uxQueueLength * ( size_t ) uxItemSize ) ) )
         {
             /* Allocate enough space to hold the maximum number of items that
              * can be in the queue at any time.  It is valid for uxItemSize to be
@@ -3186,7 +3189,27 @@ BaseType_t xQueueIsQueueFullFromISR( const QueueHandle_t xQueue )
         return pxQueue;
     }
 
-#endif /* configUSE_QUEUE_SETS */
+#endif /* #if ( ( configUSE_QUEUE_SETS == 1 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) ) */
+/*-----------------------------------------------------------*/
+
+#if ( ( configUSE_QUEUE_SETS == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
+
+    QueueSetHandle_t xQueueCreateSetStatic( const UBaseType_t uxEventQueueLength,
+                                            uint8_t * pucQueueStorage,
+                                            StaticQueue_t * pxStaticQueue )
+    {
+        QueueSetHandle_t pxQueue;
+
+        traceENTER_xQueueCreateSetStatic( uxEventQueueLength );
+
+        pxQueue = xQueueGenericCreateStatic( uxEventQueueLength, ( UBaseType_t ) sizeof( Queue_t * ), pucQueueStorage, pxStaticQueue, queueQUEUE_TYPE_SET );
+
+        traceRETURN_xQueueCreateSetStatic( pxQueue );
+
+        return pxQueue;
+    }
+
+#endif /* #if ( ( configUSE_QUEUE_SETS == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) ) */
 /*-----------------------------------------------------------*/
 
 #if ( configUSE_QUEUE_SETS == 1 )

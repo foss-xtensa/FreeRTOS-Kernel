@@ -1,5 +1,5 @@
 /*
- * FreeRTOS Kernel <DEVELOPMENT BRANCH>
+ * FreeRTOS Kernel V11.2.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
@@ -269,6 +269,9 @@ uint8_t MPU_ucQueueGetQueueType( QueueHandle_t xQueue ) FREERTOS_SYSTEM_CALL;
                                                  StaticQueue_t * pxStaticQueue,
                                                  const uint8_t ucQueueType ) FREERTOS_SYSTEM_CALL;
     QueueSetHandle_t MPU_xQueueCreateSet( const UBaseType_t uxEventQueueLength ) FREERTOS_SYSTEM_CALL;
+    QueueSetHandle_t MPU_xQueueCreateSetStatic( const UBaseType_t uxEventQueueLength,
+                                                uint8_t * pucQueueStorage,
+                                                StaticQueue_t * pxStaticQueue ) FREERTOS_SYSTEM_CALL;
     BaseType_t MPU_xQueueRemoveFromSet( QueueSetMemberHandle_t xQueueOrSemaphore,
                                         QueueSetHandle_t xQueueSet ) FREERTOS_SYSTEM_CALL;
     BaseType_t MPU_xQueueGenericReset( QueueHandle_t xQueue,
@@ -294,6 +297,9 @@ uint8_t MPU_ucQueueGetQueueType( QueueHandle_t xQueue ) FREERTOS_SYSTEM_CALL;
                                                  StaticQueue_t * pxStaticQueue,
                                                  const uint8_t ucQueueType ) PRIVILEGED_FUNCTION;
     QueueSetHandle_t MPU_xQueueCreateSet( const UBaseType_t uxEventQueueLength ) PRIVILEGED_FUNCTION;
+    QueueSetHandle_t MPU_xQueueCreateSetStatic( const UBaseType_t uxEventQueueLength,
+                                                uint8_t * pucQueueStorage,
+                                                StaticQueue_t * pxStaticQueue ) PRIVILEGED_FUNCTION;
     BaseType_t MPU_xQueueRemoveFromSet( QueueSetMemberHandle_t xQueueOrSemaphore,
                                         QueueSetHandle_t xQueueSet ) PRIVILEGED_FUNCTION;
     BaseType_t MPU_xQueueGenericReset( QueueHandle_t xQueue,
@@ -335,7 +341,7 @@ BaseType_t MPU_xTimerGenericCommandFromTask( TimerHandle_t xTimer,
 BaseType_t MPU_xTimerGenericCommandFromTaskEntry( const xTimerGenericCommandFromTaskParams_t * pxParams ) FREERTOS_SYSTEM_CALL;
 const char * MPU_pcTimerGetName( TimerHandle_t xTimer ) FREERTOS_SYSTEM_CALL;
 void MPU_vTimerSetReloadMode( TimerHandle_t xTimer,
-                              const BaseType_t uxAutoReload ) FREERTOS_SYSTEM_CALL;
+                              const BaseType_t xAutoReload ) FREERTOS_SYSTEM_CALL;
 BaseType_t MPU_xTimerGetReloadMode( TimerHandle_t xTimer ) FREERTOS_SYSTEM_CALL;
 UBaseType_t MPU_uxTimerGetReloadMode( TimerHandle_t xTimer ) FREERTOS_SYSTEM_CALL;
 TickType_t MPU_xTimerGetPeriod( TimerHandle_t xTimer ) FREERTOS_SYSTEM_CALL;
@@ -346,12 +352,12 @@ TickType_t MPU_xTimerGetExpiryTime( TimerHandle_t xTimer ) FREERTOS_SYSTEM_CALL;
  * with all the APIs. */
 TimerHandle_t MPU_xTimerCreate( const char * const pcTimerName,
                                 const TickType_t xTimerPeriodInTicks,
-                                const UBaseType_t uxAutoReload,
+                                const BaseType_t xAutoReload,
                                 void * const pvTimerID,
                                 TimerCallbackFunction_t pxCallbackFunction ) PRIVILEGED_FUNCTION;
 TimerHandle_t MPU_xTimerCreateStatic( const char * const pcTimerName,
                                       const TickType_t xTimerPeriodInTicks,
-                                      const UBaseType_t uxAutoReload,
+                                      const BaseType_t xAutoReload,
                                       void * const pvTimerID,
                                       TimerCallbackFunction_t pxCallbackFunction,
                                       StaticTimer_t * pxTimerBuffer ) PRIVILEGED_FUNCTION;

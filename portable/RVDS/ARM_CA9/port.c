@@ -1,5 +1,5 @@
 /*
- * FreeRTOS Kernel <DEVELOPMENT BRANCH>
+ * FreeRTOS Kernel V11.2.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
@@ -476,7 +476,7 @@ uint32_t ulPortSetInterruptMask( void )
          * this is not the case (if some bits represent a sub-priority).
          *
          * The priority grouping is configured by the GIC's binary point register
-         * (ICCBPR).  Writting 0 to ICCBPR will ensure it is set to its lowest
+         * (ICCBPR).  Writing 0 to ICCBPR will ensure it is set to its lowest
          * possible value (which may be above 0). */
         configASSERT( portICCBPR_BINARY_POINT_REGISTER <= portMAX_BINARY_POINT_VALUE );
     }

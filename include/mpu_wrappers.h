@@ -1,5 +1,5 @@
 /*
- * FreeRTOS Kernel <DEVELOPMENT BRANCH>
+ * FreeRTOS Kernel V11.2.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
@@ -150,6 +150,7 @@
         #define xQueueGenericCreateStatic              MPU_xQueueGenericCreateStatic
         #define xQueueGenericReset                     MPU_xQueueGenericReset
         #define xQueueCreateSet                        MPU_xQueueCreateSet
+        #define xQueueCreateSetStatic                  MPU_xQueueCreateSetStatic
         #define xQueueRemoveFromSet                    MPU_xQueueRemoveFromSet
 
         #if ( configUSE_MPU_WRAPPERS_V1 == 0 )

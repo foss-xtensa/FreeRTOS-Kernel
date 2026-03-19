@@ -1,5 +1,5 @@
 /*
- * FreeRTOS Kernel <DEVELOPMENT BRANCH>
+ * FreeRTOS Kernel V11.2.0
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
@@ -1524,6 +1524,34 @@
     #endif /* if ( ( configUSE_QUEUE_SETS == 1 ) && ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) ) */
 /*-----------------------------------------------------------*/
 
+    #if ( ( configUSE_QUEUE_SETS == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) )
+        QueueSetHandle_t MPU_xQueueCreateSetStatic( const UBaseType_t uxEventQueueLength,
+                                                    uint8_t * pucQueueStorage,
+                                                    StaticQueue_t * pxStaticQueue ) /* FREERTOS_SYSTEM_CALL */
+        {
+            QueueSetHandle_t xReturn;
+
+            if( portIS_PRIVILEGED() == pdFALSE )
+            {
+                portRAISE_PRIVILEGE();
+                portMEMORY_BARRIER();
+
+                xReturn = xQueueCreateSetStatic( uxEventQueueLength, pucQueueStorage, pxStaticQueue );
+                portMEMORY_BARRIER();
+
+                portRESET_PRIVILEGE();
+                portMEMORY_BARRIER();
+            }
+            else
+            {
+                xReturn = xQueueCreateSetStatic( uxEventQueueLength, pucQueueStorage, pxStaticQueue );
+            }
+
+            return xReturn;
+        }
+    #endif /* if ( ( configUSE_QUEUE_SETS == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 1 ) ) */
+/*-----------------------------------------------------------*/
+
     #if ( configUSE_QUEUE_SETS == 1 )
         QueueSetMemberHandle_t MPU_xQueueSelectFromSet( QueueSetHandle_t xQueueSet,
                                                         TickType_t xBlockTimeTicks ) /* FREERTOS_SYSTEM_CALL */
@@ -1799,14 +1827,14 @@
 
     #if ( configUSE_TIMERS == 1 )
         void MPU_vTimerSetReloadMode( TimerHandle_t xTimer,
-                                      const BaseType_t uxAutoReload ) /* FREERTOS_SYSTEM_CALL */
+                                      const BaseType_t xAutoReload ) /* FREERTOS_SYSTEM_CALL */
         {
             if( portIS_PRIVILEGED() == pdFALSE )
             {
                 portRAISE_PRIVILEGE();
                 portMEMORY_BARRIER();
 
-                vTimerSetReloadMode( xTimer, uxAutoReload );
+                vTimerSetReloadMode( xTimer, xAutoReload );
                 portMEMORY_BARRIER();
 
                 portRESET_PRIVILEGE();
@@ -1814,7 +1842,7 @@
             }
             else
             {
-                vTimerSetReloadMode( xTimer, uxAutoReload );
+                vTimerSetReloadMode( xTimer, xAutoReload );
             }
         }
     #endif /* if ( configUSE_TIMERS == 1 ) */
